@@ -159,6 +159,8 @@ fn extract_numeric_value(input: &str) -> Option<(String, i32)>
     Some(result)
 }
 
+// *** Required Structures ***
+
 #[derive(Copy, Clone)]
 pub struct AtlasDimensions
 {
@@ -212,7 +214,6 @@ impl CharacterInfo
         }
     }
 }
-
 
 #[cfg(test)]
 mod tests
@@ -274,7 +275,6 @@ mod tests
         validate_third_char_tex_coords(&characters[2]);
 
         assert_eq!([(0.0, 0.0), (0.0, 0.0), (0.0, 0.0), (0.0, 0.0)], second_char.texture_coordinates);
-
     }
 
     #[test]
