@@ -8,18 +8,19 @@ macro_rules! set_char_values
 {
     ($char_info: expr, $line: expr, $($member: tt, $member_expr: expr),*) =>
     {
-        let (identifier, value) = extract_numeric_value($line)?;
+        if let Some((identifier, value)) = extract_numeric_value($line)
+        {
+            // When comparing the member value, the input to the macro must be an expression.
+            // However, using an expression when assigning a member variable does not work.
+            // Hence the member / member value is passed in as a tt and a expression
 
-        // When comparing the member value, the input to the macro must be an expression.
-        // However, using an expression when assigning a member variable does not work.
-        // Hence the member / member value is passed in as a tt and a expression
-
-        $(
-            if identifier == $member_expr
-            {
-                $char_info.$member = Some(value);
-            }
-        )+
+            $(
+                if identifier == $member_expr
+                {
+                    $char_info.$member = Some(value);
+                }
+            )+
+        }
     };
 }
 
@@ -95,14 +96,14 @@ fn extract_characters<A: AsRef<Path> + Debug + Clone>(file_location: A) -> Resul
 /// value of that variable
 ///
 /// `input` - the memberVariable-value string extracted from the font file
-fn extract_numeric_value(input: &str) -> Result<(String, i32), String>
+fn extract_numeric_value(input: &str) -> Option<(String, i32)>
 {
     let mut result = ("".to_string(), 0);
 
     // Should only be two possible split results if input is of the form of [variable]=[value]
     if input.split('=').count() != 2
     {
-        return Err(format!("The provided input string does not match the expected [variable]=[value] format: {}", input));
+        return None;
     }
 
     for (index, x) in input.split('=').enumerate()
@@ -117,16 +118,12 @@ fn extract_numeric_value(input: &str) -> Result<(String, i32), String>
             match x.parse::<i32>()
             {
                 Ok(i) => result.1 = i,
-                Err(_) =>
-                    {
-                        // Err error message not the prettiest, hence a custom message
-                        return Err(format!("Unable to parse value {} in line {}", x, input))
-                    }
+                Err(_) => return None
             }
         }
     }
 
-    Ok(result)
+    Some(result)
 }
 
 /// Stores the information required to extract a character from the associated texture atlas [of the
@@ -300,10 +297,27 @@ mod tests
     }
 
     #[test]
-    #[should_panic]
     fn check_incorrect_format()
     {
         let test_file = get_test_folder().join("incorrect_format.fnt");
-        extract_characters(test_file).unwrap();
+
+        let characters = extract_characters(test_file).unwrap();
+
+        assert_eq!(3, characters.len());
+
+        let second_char = &characters[1];
+        assert_eq!(Some(32), second_char.id);
+        assert_eq!(Some(0), second_char.x);
+        assert_eq!(Some(0), second_char.y);
+        assert_eq!(Some(0), second_char.width);
+        assert_eq!(Some(0), second_char.height);
+        assert_eq!(Some(0), second_char.x_offset);
+        assert_eq!(None, second_char.y_offset);
+        assert_eq!(None, second_char.x_advance);
+        assert_eq!(Some(0), second_char.page);
+        assert_eq!(Some(0), second_char.chnl);
+
+        validate_untouched_char(&characters[0]);
+        validate_untouched_char(&characters[2]);
     }
 }
