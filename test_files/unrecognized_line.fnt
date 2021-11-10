@@ -4,4 +4,4 @@ page id=0 file="arial.png"
 chars count=95
 char id=124   x=0     y=0     width=22     height=72     xoffset=-3     yoffset=3    xadvance=30     page=0  chnl=0
 char isdfd=32   x=0     ysdf=0     wsdfidth=0     hsdfeight=0     xoffsdfset=0     yoffwerset=53    xadvan234ce=32     sdfpage=0  ch234nl=0
-char id=124   x=0     y=0     width=22     height=72     xoffset=-3     yoffset=3    xadvance=30     page=0  chnl=0
+char id=124   x=256     y=256     width=22     height=72     xoffset=-3     yoffset=3    xadvance=30     page=0  chnl=0
