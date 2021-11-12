@@ -28,7 +28,7 @@ macro_rules! set_char_values
 /// as well as render those characters onto a screen
 ///
 /// `file_location` - the location of the file in the angel file format
-fn extract_characters<A: AsRef<Path> + Debug + Clone>(file_location: A, atlas_dimensions: AtlasDimensions) -> Result<Vec<CharacterInfo>, String>
+pub fn extract_characters<A: AsRef<Path> + Debug + Clone>(file_location: A, atlas_dimensions: AtlasDimensions) -> Result<Vec<CharacterInfo>, String>
 {
     // Attempting to open the file specified by file location consumes the file location variable.
     // This is an issue when creating the error message if file opening failed
@@ -164,15 +164,15 @@ fn extract_numeric_value(input: &str) -> Option<(String, i32)>
 #[derive(Copy, Clone)]
 pub struct AtlasDimensions
 {
-    width: i32,
-    height: i32,
+    pub width: i32,
+    pub height: i32,
 }
 
 /// The indexes representing the corner of a plane that is used to texture a portion of the bitmap.
 /// Used in with the CharacterInfo texture_coordinates member variable
-const TOP_LEFT_INDEX: usize = 0;
-const TOP_RIGHT_INDEX: usize = 1;
-const BOTTOM_LEFT_INDEX: usize = 2;
+const TOP_LEFT_INDEX: usize = 1;
+const TOP_RIGHT_INDEX: usize = 2;
+const BOTTOM_LEFT_INDEX: usize = 0;
 const BOTTOM_RIGHT_INDEX: usize = 3;
 
 /// Stores the information required to extract a character from the associated texture atlas [of the
